@@ -1,5 +1,5 @@
 class Article:
-     all = []
+    all = []
 
     def __init__(self, author, magazine, title):
         self.author = author
@@ -43,34 +43,34 @@ class Article:
         
 class Author:
     def __init__(self, name):
-        self.name = name
+        self._name = None
+        self.name = name  # Uses the setter for validation
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        if hasattr(self, '_name') and self._name is not None:
+            raise AttributeError("Name cannot be changed after instantiation")
+        if not isinstance(value, str):
+            raise ValueError("Name must be a string")
+        if len(value) == 0:
+            raise ValueError("Name must be longer than 0 characters")
+        self._name = value
 
     def articles(self):
-        pass
+        return [article for article in Article.all if article.author == self]
 
     def magazines(self):
-        pass
+        magazines_list = [article.magazine for article in self.articles()]
+        return list(set(magazines_list))
 
     def add_article(self, magazine, title):
-        pass
+        return Article(self, magazine, title)
 
     def topic_areas(self):
-        pass
-
-class Magazine:
-    def __init__(self, name, category):
-        self.name = name
-        self.category = category
-
-    def articles(self):
-        pass
-
-    def contributors(self):
-        pass
-
-    def article_titles(self):
-        pass
-
-    def contributing_authors(self):
-        pass
-    
+        categories = [magazine.category for magazine in self.magazines()]
+        unique_categories = list(set(categories))
+        return unique_categories if unique_categories else None
